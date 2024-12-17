@@ -49,8 +49,8 @@ class Task {
       this.renderTaskTable(); // displays tasks in list format
 
       // resets form input to default
-      const form = document.getElementById("form"); 
-      form.reset();
+      const formReset = document.getElementById("form"); 
+      formReset.reset();
   
     }
   
@@ -180,7 +180,6 @@ class Task {
     // retrieves Task from local Storage
     const json = localStorage.getItem('tasks');
 
-    // 
     if (json) {
 
       // parses JSON string into array of objects
