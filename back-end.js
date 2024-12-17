@@ -165,11 +165,6 @@ class Task {
     });
   }
 
-  // function 6.5
-  editTaskArray(task) {
-    task.taskName
-  }
-
   // function 7
   saveTasksToLocalStorage() {
     // parses this.tasks back into string
