@@ -1,16 +1,17 @@
 class Task {
 
     // // initializes Task info. Values are usually parsed from a JSON object
-    constructor(id, taskName, complete) { 
+    constructor(id, taskName, complete, date) { 
       this.id = id;
       this.taskName = taskName;
       this.complete = complete;
+      this.date = date
     }
 
     // creates Task instance from JSON object using static method
     // Converts user input or data from an API into Task Object
     static fromJSON(json) { 
-        return new Task(json.id, json.taskName, json.complete);
+        return new Task(json.id, json.taskName, json.complete, json.date);
     }
   }
   
@@ -42,12 +43,13 @@ class Task {
         return;
       }
   
-      const id = new Date().getTime(); // creates random ID values using time in ms.
-      const task = new Task(id, this.taskInput.value, true); // sets values for each new Task Instance
+      const id = Date.now() // creates random ID values using time in ms.
+      const date = this.getCurrentDate()
+      const task = new Task(id, this.taskInput.value, "Not Completed", date); // sets values for each new Task Instance
       this.tasks.push(task); // pushes new task to 'this.tasks' array 
   
       this.renderTaskTable(); // displays tasks in list format
-
+ 
       // resets form input to default
       const formReset = document.getElementById("form"); 
       formReset.reset();
@@ -77,12 +79,26 @@ class Task {
       const tdTask = document.createElement('td');
       const tdComplete = document.createElement('td');
       const tdActions = document.createElement('td');
+      const tdDate = document.createElement('td')
   
       // places task object values into specified 'td' table cells
       tdTask.innerHTML = task.taskName;
-      tdComplete.innerHTML = task.complete;
+
+      // After setting tdComplete
+      const span = document.createElement('span');
+      span.style.cursor = "pointer";
+      span.innerText = task.complete;
+      span.addEventListener("click", () => {
+        this.toggleCompletionStatus(span, task.id);
+      });
+
+      tdComplete.appendChild(span);
+
       tdActions.innerHTML = task.id;
-  
+
+      tdDate.innerHTML = task.date
+
+
       // creates 'Delete' and 'Edit' actions
       const actionButtons = this.createActionButtons(task);
 
@@ -95,6 +111,7 @@ class Task {
       tr.appendChild(tdTask);
       tr.appendChild(tdComplete);
       tr.appendChild(tdActions);
+      tr.appendChild(tdDate)
 
       return tr;
   
@@ -190,6 +207,33 @@ class Task {
       }
      
     }
+
+// function 8
+  toggleCompletionStatus(el, taskID) {
+  // Toggle the visual text
+  const newValue = "Completed ✅"
+
+  if (el.innerText.trim() === "Not Completed") {
+    el.innerText = newValue;
+  } else 
+     el.innerText = "Not Completed";
+
+  // Update the task object
+  const task = this.tasks.find(t => t.id === taskID);
+  if (task) {
+    task.complete = newValue;
+    this.saveTasksToLocalStorage();
+  }
+}
+
+  getCurrentDate() {
+    const today = new Date();
+    const dd = String(today.getDate()).padStart(2, '0');
+    const mm = String(today.getMonth() + 1).padStart(2, '0'); // Month is 0-indexed, so add 1
+    const yyyy = today.getFullYear();
+
+    return `${mm}/${dd}/${yyyy}`;
+  }
 
 }
   // instance for UI class to maintain sustainability (displayed once)
